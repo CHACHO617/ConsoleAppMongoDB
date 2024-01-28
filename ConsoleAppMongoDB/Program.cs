@@ -874,7 +874,7 @@ class Program
     }
 
 
-    static void DeleteUnidad(IMongoCollection<BsonDocument> collection)S
+    static void DeleteUnidad(IMongoCollection<BsonDocument> collection)
     {
         Console.WriteLine("Ingrese el ID de la Unidad a Eliminar:");
         string idUnidad = Console.ReadLine();
