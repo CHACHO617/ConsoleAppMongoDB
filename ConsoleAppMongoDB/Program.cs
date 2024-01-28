@@ -25,9 +25,10 @@ class Program
             // Main loop
             while (true)
             {
+                Console.Clear();
                 Console.WriteLine("Choose an action:");
-                Console.WriteLine("1. Crear un Socio");
-                Console.WriteLine("2. Crear una Unidad");
+                Console.WriteLine("1. Crear Socio");
+                Console.WriteLine("2. Crear Unidad");
 
                 Console.WriteLine("3. Ver los Socios");
                 Console.WriteLine("4. Ver las Unidades");
@@ -43,6 +44,8 @@ class Program
                 Console.Write("Selecciona una acción: ");
                 string choice = Console.ReadLine();
 
+                
+
                 switch (choice)
                 {
                     case "1":
@@ -51,7 +54,7 @@ class Program
 
                     case "2":
                         ReadSocio(collectionSocio);
-                        CreateUnidades(collectionSocio);
+                        CreateUnidades(collectionUnidad);
                         break;
 
                     case "3":
@@ -64,27 +67,31 @@ class Program
 
 
                     case "5":
+                        ReadSocio(collectionSocio);
                         UpdateSocio(collectionSocio);
                         break;
 
                     case "6":
+                        ReadUnidad(collectionUnidad);
                         UpdateUnidad(collectionUnidad);
                         break;
 
                     case "7":
+                        ReadSocio(collectionSocio);
                         DeleteSocio(collectionSocio);
                         break;
 
                     case "8":
+                        ReadUnidad(collectionUnidad);
                         DeleteUnidad(collectionUnidad);
                         break;
 
                     case "0":
-                        Console.WriteLine("Exiting the application.");
+                        Console.WriteLine("Saliendo del programa");
                         return;
 
                     default:
-                        Console.WriteLine("Invalid choice. Please enter a valid option.");
+                        Console.WriteLine("Por favor selecciona una opcion valida: ");
                         break;
                 }
             }
@@ -148,6 +155,7 @@ class Program
 
     static void CreateSocios(IMongoCollection<BsonDocument> collection)
     {
+        Console.Clear();
         int count = 0;
         Console.WriteLine("Ingrese la cantidad de socios a ingresar:");
         string numIngresadoString = Console.ReadLine();
@@ -155,19 +163,19 @@ class Program
         if (int.TryParse(numIngresadoString, out numIngresado))
         {
             // Parsing successful, numIngresado contains the integer value
-            Console.WriteLine("Number entered: " + numIngresado);
+            //Console.WriteLine("Number entered: " + numIngresado);
         }
         else
         {
             // Parsing failed, handle invalid input
-            Console.WriteLine("Invalid input. Please enter a valid integer.");
+            Console.WriteLine("Por favor ingresa un numero");
         }
 
         while (count < numIngresado)
         {
             count++;
             // Prompt the user for input
-            Console.WriteLine("Socio " + count);
+            Console.WriteLine("--------------------------------------------\nSocio " + count);
             Console.WriteLine("Ingrese el nombre:");
             string nombre = Console.ReadLine();
 
@@ -213,6 +221,7 @@ class Program
             collection.InsertOne(document);
 
             Console.WriteLine("Socio Creado Exitosamente.");
+            Console.ReadLine();
         }
     }
 
@@ -276,6 +285,7 @@ class Program
 
     static void CreateUnidades(IMongoCollection<BsonDocument> collection)
     {
+        
         int count = 0;
         Console.WriteLine("Ingrese la cantidad de unidades a ingresar:");
         string numIngresadoString = Console.ReadLine();
@@ -283,19 +293,19 @@ class Program
         if (int.TryParse(numIngresadoString, out numIngresado))
         {
             // Parsing successful, numIngresado contains the integer value
-            Console.WriteLine("Number entered: " + numIngresado);
+            //Console.WriteLine("Number entered: " + numIngresado);
         }
         else
         {
             // Parsing failed, handle invalid input
-            Console.WriteLine("Invalid input. Please enter a valid integer.");
+            Console.WriteLine("Ingresa un numero ");
         }
 
         while (count < numIngresado)
         {
             count++;
             // Prompt the user for input
-            Console.WriteLine("Unidadad " + count);
+            Console.WriteLine("--------------------------------------------\nUnidadad " + count);
             Console.WriteLine("Ingrese el ID del Socio:");
             string socioIdString = Console.ReadLine();
             ObjectId socioId;
@@ -347,6 +357,7 @@ class Program
             collection.InsertOne(document);
 
             Console.WriteLine("Unidad Creada Exitosamente.");
+            Console.ReadLine();
         }
     }
 
@@ -354,10 +365,11 @@ class Program
     static void ReadSocio(IMongoCollection<BsonDocument> collection)
     {
         // Read all documents in the collection
+        Console.Clear();
         var documents = collection.Find(new BsonDocument()).ToList();
 
-        Console.WriteLine("Read documents:");
-        Console.WriteLine("\n\n| " + "Id" +
+        Console.WriteLine("Listado de Socios:");
+        Console.WriteLine("\n| " + "Id" +
                               "| " + "Nombre" +
                               "| " + "Apellido" +
                               "| " + "Cedula" +
@@ -381,17 +393,21 @@ class Program
                               "| " + socio.Direccion.Calle_secundaria +
                               "| " + socio.Direccion.Numero);
         }
+
+        Console.ReadLine();
+  
     }
 
     
     static void ReadUnidad(IMongoCollection<BsonDocument> collection)
     {
+        Console.Clear();
         // Read all documents in the collection
         var documents = collection.Find(new BsonDocument()).ToList();
 
-        Console.WriteLine("Read documents:");
+        Console.WriteLine("Listado de Unidades:");
 
-        Console.WriteLine("\n\n| " + "Id Unidad" +
+        Console.WriteLine("\n| " + "Id Unidad" +
                              "| " + "Id Socio" +
                              "| " + "Número" +
                              "| " + "Chasis" +
@@ -415,6 +431,9 @@ class Program
                               "| " + unidad.Caracteristicas.Color_original +
                               "| " + unidad.Caracteristicas.Cilindrada);
         }
+
+        Console.ReadLine();
+
     }
 
 
@@ -428,6 +447,7 @@ class Program
         if (!ObjectId.TryParse(idSocio, out socioId))
         {
             Console.WriteLine("ID del Socio no válido.");
+            Console.ReadLine();
             return;
         }
         // Create a filter to find the document to update
@@ -474,10 +494,10 @@ class Program
                     .Set("Apellido", apellido)
                     .Set("Cedula", cedula)
                     .Set("Tipo_de_Licencia", tipoLicencia)
-                    .Set("Sector", sector)
-                    .Set("Calle_principal", callePrincipal)
-                    .Set("Calle_secundaria", calleSecundaria)
-                    .Set("Numero", numero);
+                    .Set("Direccion.Sector", sector)
+                    .Set("Direccion.Calle_principal", callePrincipal)
+                    .Set("Direccion.Calle_secundaria", calleSecundaria)
+                    .Set("Direccion.Numero", numero);
 
                 // Update the document
                 var result = collection.UpdateOne(filter, updateDefinition);
@@ -579,10 +599,10 @@ class Program
 
                 // Create an update definition to set the value of the "Nombre" field to "CAMBIADO"
                 updateDefinition = Builders<BsonDocument>.Update
-                    .Set("Sector", sector)
-                    .Set("Calle_principal", callePrincipal)
-                    .Set("Calle_secundaria", calleSecundaria)
-                    .Set("Numero", numero);
+                    .Set("Direccion.Sector", sector)
+                    .Set("Direccion.Calle_principal", callePrincipal)
+                    .Set("Direccion.Calle_secundaria", calleSecundaria)
+                    .Set("Direccion.Numero", numero);
 
                 // Update the document
                 result = collection.UpdateOne(filter, updateDefinition);
@@ -621,6 +641,7 @@ class Program
         if (!ObjectId.TryParse(idUnidad, out unidadId))
         {
             Console.WriteLine("ID de la Unidad no válido.");
+            Console.ReadLine();
             return;
         }
 
@@ -645,6 +666,7 @@ class Program
                 if (!ObjectId.TryParse(socioIdString, out socioId))
                 {
                     Console.WriteLine("ID del Socio no válido.");
+                    Console.ReadLine();
                     return;
                 }
 
@@ -702,6 +724,7 @@ class Program
                 if (!ObjectId.TryParse(socioIdString, out socioId))
                 {
                     Console.WriteLine("ID del Socio no válido.");
+                    Console.ReadLine();
                     return;
                 }
 
@@ -835,6 +858,7 @@ class Program
         if (!ObjectId.TryParse(idSocio, out socioId))
         {
             Console.WriteLine("ID del Socio no válido.");
+            Console.ReadLine();
             return;
         }
         // Create a filter to find the document to update
@@ -843,12 +867,14 @@ class Program
 
         // Delete the document
         collection.DeleteOne(filter);
-
         Console.WriteLine("Document deleted successfully.");
+        Console.ReadLine();
+
+
     }
 
 
-    static void DeleteUnidad(IMongoCollection<BsonDocument> collection)
+    static void DeleteUnidad(IMongoCollection<BsonDocument> collection)S
     {
         Console.WriteLine("Ingrese el ID de la Unidad a Eliminar:");
         string idUnidad = Console.ReadLine();
@@ -858,6 +884,7 @@ class Program
         if (!ObjectId.TryParse(idUnidad, out unidadId))
         {
             Console.WriteLine("ID de la Unidad no válido.");
+            Console.ReadLine();
             return;
         }
 
@@ -867,6 +894,7 @@ class Program
         collection.DeleteOne(filter);
 
         Console.WriteLine("Document deleted successfully.");
+        Console.ReadLine();
     }
 }
 
