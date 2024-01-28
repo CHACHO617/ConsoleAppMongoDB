@@ -46,12 +46,12 @@ class Program
                 switch (choice)
                 {
                     case "1":
-                        CreateSocio(collectionSocio);
+                        CreateSocios(collectionSocio);
                         break;
 
                     case "2":
                         ReadSocio(collectionSocio);
-                        CreateUnidad(collectionUnidad);
+                        CreateUnidades(collectionSocio);
                         break;
 
                     case "3":
@@ -146,6 +146,77 @@ class Program
     }
 
 
+    static void CreateSocios(IMongoCollection<BsonDocument> collection)
+    {
+        int count = 0;
+        Console.WriteLine("Ingrese la cantidad de socios a ingresar:");
+        string numIngresadoString = Console.ReadLine();
+        int numIngresado;
+        if (int.TryParse(numIngresadoString, out numIngresado))
+        {
+            // Parsing successful, numIngresado contains the integer value
+            Console.WriteLine("Number entered: " + numIngresado);
+        }
+        else
+        {
+            // Parsing failed, handle invalid input
+            Console.WriteLine("Invalid input. Please enter a valid integer.");
+        }
+
+        while (count < numIngresado)
+        {
+            count++;
+            // Prompt the user for input
+            Console.WriteLine("Socio " + count);
+            Console.WriteLine("Ingrese el nombre:");
+            string nombre = Console.ReadLine();
+
+            Console.WriteLine("Ingrese el apellido:");
+            string apellido = Console.ReadLine();
+
+            Console.WriteLine("Ingrese la cédula:");
+            string cedula = Console.ReadLine();
+
+            Console.WriteLine("Ingrese el tipo de licencia:");
+            string tipoLicencia = Console.ReadLine();
+
+            Console.WriteLine("Ingrese el sector de la dirección:");
+            string sector = Console.ReadLine();
+
+            Console.WriteLine("Ingrese la calle principal de la dirección:");
+            string callePrincipal = Console.ReadLine();
+
+            Console.WriteLine("Ingrese la calle secundaria de la dirección:");
+            string calleSecundaria = Console.ReadLine();
+
+            Console.WriteLine("Ingrese el número de la dirección:");
+            string numero = Console.ReadLine();
+
+            // Create the BsonDocument using the user input
+            var document = new BsonDocument
+    {
+        { "Nombre", nombre },
+        { "Apellido", apellido },
+        { "Cedula", cedula },
+        { "Tipo_de_Licencia", tipoLicencia },
+        { "Direccion", new BsonDocument
+            {
+                { "Sector", sector },
+                { "Calle_principal", callePrincipal },
+                { "Calle_secundaria", calleSecundaria },
+                { "Numero", numero }
+            }
+        }
+    };
+
+            // Insert the document into the collection
+            collection.InsertOne(document);
+
+            Console.WriteLine("Socio Creado Exitosamente.");
+        }
+    }
+
+
     static void CreateUnidad(IMongoCollection<BsonDocument> collection)
     {
         // Prompt the user for input
@@ -200,6 +271,83 @@ class Program
         collection.InsertOne(document);
 
         Console.WriteLine("Unidad Creada Exitosamente.");
+    }
+
+
+    static void CreateUnidades(IMongoCollection<BsonDocument> collection)
+    {
+        int count = 0;
+        Console.WriteLine("Ingrese la cantidad de unidades a ingresar:");
+        string numIngresadoString = Console.ReadLine();
+        int numIngresado;
+        if (int.TryParse(numIngresadoString, out numIngresado))
+        {
+            // Parsing successful, numIngresado contains the integer value
+            Console.WriteLine("Number entered: " + numIngresado);
+        }
+        else
+        {
+            // Parsing failed, handle invalid input
+            Console.WriteLine("Invalid input. Please enter a valid integer.");
+        }
+
+        while (count < numIngresado)
+        {
+            count++;
+            // Prompt the user for input
+            Console.WriteLine("Unidadad " + count);
+            Console.WriteLine("Ingrese el ID del Socio:");
+            string socioIdString = Console.ReadLine();
+            ObjectId socioId;
+            if (!ObjectId.TryParse(socioIdString, out socioId))
+            {
+                Console.WriteLine("ID del Socio no válido.");
+                return;
+            }
+
+            Console.WriteLine("Ingrese el número:");
+            string numero = Console.ReadLine();
+
+            Console.WriteLine("Ingrese el chasis:");
+            string chasis = Console.ReadLine();
+
+            Console.WriteLine("Ingrese el motor:");
+            string motor = Console.ReadLine();
+
+            Console.WriteLine("Ingrese la marca de las características:");
+            string marca = Console.ReadLine();
+
+            Console.WriteLine("Ingrese el modelo de las características:");
+            string modelo = Console.ReadLine();
+
+            Console.WriteLine("Ingrese el color original de las características:");
+            string colorOriginal = Console.ReadLine();
+
+            Console.WriteLine("Ingrese la cilindrada de las características:");
+            string cilindrada = Console.ReadLine();
+
+            // Create the BsonDocument using the user input
+            var document = new BsonDocument
+        {
+            { "Socio", socioId },
+            { "Numero", numero },
+            { "Chasis", chasis },
+            { "Motor", motor },
+            { "Caracteristicas", new BsonDocument
+                {
+                    { "Marca", marca },
+                    { "Modelo", modelo },
+                    { "Color_original", colorOriginal },
+                    { "Cilindrada", cilindrada }
+                }
+            }
+        };
+
+            // Insert the document into the collection
+            collection.InsertOne(document);
+
+            Console.WriteLine("Unidad Creada Exitosamente.");
+        }
     }
 
 
@@ -285,53 +433,181 @@ class Program
         // Create a filter to find the document to update
         var filter = Builders<BsonDocument>.Filter.Eq("_id", socioId);
 
-        Console.WriteLine("Ingrese el nombre:");
-        string nombre = Console.ReadLine();
-
-        Console.WriteLine("Ingrese el apellido:");
-        string apellido = Console.ReadLine();
-
-        Console.WriteLine("Ingrese la cédula:");
-        string cedula = Console.ReadLine();
-
-        Console.WriteLine("Ingrese el tipo de licencia:");
-        string tipoLicencia = Console.ReadLine();
-
-        Console.WriteLine("Ingrese el sector de la dirección:");
-        string sector = Console.ReadLine();
-
-        Console.WriteLine("Ingrese la calle principal de la dirección:");
-        string callePrincipal = Console.ReadLine();
-
-        Console.WriteLine("Ingrese la calle secundaria de la dirección:");
-        string calleSecundaria = Console.ReadLine();
-
-        Console.WriteLine("Ingrese el número de la dirección:");
-        string numero = Console.ReadLine();
-
-        // Create an update definition to set the value of the "Nombre" field to "CAMBIADO"
-        var updateDefinition = Builders<BsonDocument>.Update
-            .Set("Nombre", nombre)
-            .Set("Apellido", apellido)
-            .Set("Cedula", cedula)
-            .Set("Tipo_de_Licencia", tipoLicencia)
-            .Set("Sector", sector)
-            .Set("Calle_principal", callePrincipal)
-            .Set("Calle_secundaria", calleSecundaria)
-            .Set("Numero", numero);
-
-        // Update the document
-        var result = collection.UpdateOne(filter, updateDefinition);
-
-        // Check if the update was successful
-        if (result.ModifiedCount > 0)
+        
+        Console.WriteLine("1. Toda la información del socio");
+        Console.WriteLine("2. Nombre y Apellido");
+        Console.WriteLine("3. Cedula");
+        Console.WriteLine("4. Tipo de Licencia");
+        Console.WriteLine("5. Dirección");
+        Console.WriteLine("Selecciona que editar: ");
+        string editar = Console.ReadLine();
+        switch (editar)
         {
-            Console.WriteLine("Documento actualizado correctamente.");
+            case "1":
+                Console.WriteLine("Ingrese el nombre:");
+                string nombre = Console.ReadLine();
+
+                Console.WriteLine("Ingrese el apellido:");
+                string apellido = Console.ReadLine();
+
+                Console.WriteLine("Ingrese la cédula:");
+                string cedula = Console.ReadLine();
+
+                Console.WriteLine("Ingrese el tipo de licencia:");
+                string tipoLicencia = Console.ReadLine();
+
+                Console.WriteLine("Ingrese el sector de la dirección:");
+                string sector = Console.ReadLine();
+
+                Console.WriteLine("Ingrese la calle principal de la dirección:");
+                string callePrincipal = Console.ReadLine();
+
+                Console.WriteLine("Ingrese la calle secundaria de la dirección:");
+                string calleSecundaria = Console.ReadLine();
+
+                Console.WriteLine("Ingrese el número de la dirección:");
+                string numero = Console.ReadLine();
+
+                // Create an update definition to set the value of the "Nombre" field to "CAMBIADO"
+                var updateDefinition = Builders<BsonDocument>.Update
+                    .Set("Nombre", nombre)
+                    .Set("Apellido", apellido)
+                    .Set("Cedula", cedula)
+                    .Set("Tipo_de_Licencia", tipoLicencia)
+                    .Set("Sector", sector)
+                    .Set("Calle_principal", callePrincipal)
+                    .Set("Calle_secundaria", calleSecundaria)
+                    .Set("Numero", numero);
+
+                // Update the document
+                var result = collection.UpdateOne(filter, updateDefinition);
+
+                // Check if the update was successful
+                if (result.ModifiedCount > 0)
+                {
+                    Console.WriteLine("Documento actualizado correctamente.");
+                }
+                else
+                {
+                    Console.WriteLine("No se encontró ningún documento para actualizar.");
+                }
+                break;
+
+            case "2":
+                Console.WriteLine("Ingrese el nombre:");
+                nombre = Console.ReadLine();
+
+                Console.WriteLine("Ingrese el apellido:");
+                apellido = Console.ReadLine();
+
+                updateDefinition = Builders<BsonDocument>.Update
+                    .Set("Nombre", nombre)
+                    .Set("Apellido", apellido);
+
+                // Update the document
+                result = collection.UpdateOne(filter, updateDefinition);
+
+                // Check if the update was successful
+                if (result.ModifiedCount > 0)
+                {
+                    Console.WriteLine("Documento actualizado correctamente.");
+                }
+                else
+                {
+                    Console.WriteLine("No se encontró ningún documento para actualizar.");
+                }
+                break;
+
+            case "3":
+                Console.WriteLine("Ingrese la cédula:");
+                cedula = Console.ReadLine();
+                updateDefinition = Builders<BsonDocument>.Update
+                   .Set("Cedula", cedula);
+
+                // Update the document
+                result = collection.UpdateOne(filter, updateDefinition);
+
+                // Check if the update was successful
+                if (result.ModifiedCount > 0)
+                {
+                    Console.WriteLine("Documento actualizado correctamente.");
+                }
+                else
+                {
+                    Console.WriteLine("No se encontró ningún documento para actualizar.");
+                }
+
+                break;
+
+
+            case "4":
+                Console.WriteLine("Ingrese el tipo de licencia:");
+                tipoLicencia = Console.ReadLine();
+
+                // Create an update definition to set the value of the "Nombre" field to "CAMBIADO"
+                updateDefinition = Builders<BsonDocument>.Update
+                    .Set("Tipo_de_Licencia", tipoLicencia);
+                    
+
+                // Update the document
+                result = collection.UpdateOne(filter, updateDefinition);
+
+                // Check if the update was successful
+                if (result.ModifiedCount > 0)
+                {
+                    Console.WriteLine("Documento actualizado correctamente.");
+                }
+                else
+                {
+                    Console.WriteLine("No se encontró ningún documento para actualizar.");
+                }
+
+                break;
+
+            case "5":
+                Console.WriteLine("Ingrese el sector de la dirección:");
+                sector = Console.ReadLine();
+
+                Console.WriteLine("Ingrese la calle principal de la dirección:");
+                callePrincipal = Console.ReadLine();
+
+                Console.WriteLine("Ingrese la calle secundaria de la dirección:");
+                calleSecundaria = Console.ReadLine();
+
+                Console.WriteLine("Ingrese el número de la dirección:");
+                numero = Console.ReadLine();
+
+                // Create an update definition to set the value of the "Nombre" field to "CAMBIADO"
+                updateDefinition = Builders<BsonDocument>.Update
+                    .Set("Sector", sector)
+                    .Set("Calle_principal", callePrincipal)
+                    .Set("Calle_secundaria", calleSecundaria)
+                    .Set("Numero", numero);
+
+                // Update the document
+                result = collection.UpdateOne(filter, updateDefinition);
+
+                // Check if the update was successful
+                if (result.ModifiedCount > 0)
+                {
+                    Console.WriteLine("Documento actualizado correctamente.");
+                }
+                else
+                {
+                    Console.WriteLine("No se encontró ningún documento para actualizar.");
+                }
+                break;
+
+
+            case "0":
+                Console.WriteLine("Exiting the application.");
+                return;
+
+            default:
+                Console.WriteLine("Invalid choice. Please enter a valid option.");
+                break;
         }
-        else
-        {
-            Console.WriteLine("No se encontró ningún documento para actualizar.");
-        }
+
     }
 
 
@@ -351,60 +627,201 @@ class Program
         // Create a filter to find the document to update
         var filter = Builders<BsonDocument>.Filter.Eq("_id", unidadId);
 
-        // Prompt the user for input
-        Console.WriteLine("Ingrese el ID del Socio:");
-        string socioIdString = Console.ReadLine();
-        ObjectId socioId;
-        if (!ObjectId.TryParse(socioIdString, out socioId))
+        Console.WriteLine("1. Toda la información del socio");
+        Console.WriteLine("2. Socio");
+        Console.WriteLine("3. Número");
+        Console.WriteLine("4. Chasis y Motor");
+        Console.WriteLine("5. Características");
+        Console.WriteLine("Selecciona que editar: ");
+
+        string editar = Console.ReadLine();
+        switch (editar)
         {
-            Console.WriteLine("ID del Socio no válido.");
-            return;
+            case "1":
+                // Prompt the user for input
+                Console.WriteLine("Ingrese el ID del Socio:");
+                string socioIdString = Console.ReadLine();
+                ObjectId socioId;
+                if (!ObjectId.TryParse(socioIdString, out socioId))
+                {
+                    Console.WriteLine("ID del Socio no válido.");
+                    return;
+                }
+
+                Console.WriteLine("Ingrese el número:");
+                string numero = Console.ReadLine();
+
+                Console.WriteLine("Ingrese el chasis:");
+                string chasis = Console.ReadLine();
+
+                Console.WriteLine("Ingrese el motor:");
+                string motor = Console.ReadLine();
+
+                Console.WriteLine("Ingrese la marca de las características:");
+                string marca = Console.ReadLine();
+
+                Console.WriteLine("Ingrese el modelo de las características:");
+                string modelo = Console.ReadLine();
+
+                Console.WriteLine("Ingrese el color original de las características:");
+                string colorOriginal = Console.ReadLine();
+
+                Console.WriteLine("Ingrese la cilindrada de las características:");
+                string cilindrada = Console.ReadLine();
+
+                // Create an update definition to set the values of the fields
+                var updateDefinition = Builders<BsonDocument>.Update
+                    .Set("Socio", socioId)
+                    .Set("Numero", numero)
+                    .Set("Chasis", chasis)
+                    .Set("Motor", motor)
+                    .Set("Caracteristicas.Marca", marca)
+                    .Set("Caracteristicas.Modelo", modelo)
+                    .Set("Caracteristicas.Color_original", colorOriginal)
+                    .Set("Caracteristicas.Cilindrada", cilindrada);
+
+                // Update the document
+                var result = collection.UpdateOne(filter, updateDefinition);
+
+                // Check if the update was successful
+                if (result.ModifiedCount > 0)
+                {
+                    Console.WriteLine("Documento actualizado correctamente.");
+                }
+                else
+                {
+                    Console.WriteLine("No se encontró ningún documento para actualizar.");
+                }
+
+                break;
+
+            case "2":
+                // Prompt the user for input
+                Console.WriteLine("Ingrese el ID del Socio:");
+                socioIdString = Console.ReadLine();
+                if (!ObjectId.TryParse(socioIdString, out socioId))
+                {
+                    Console.WriteLine("ID del Socio no válido.");
+                    return;
+                }
+
+                // Create an update definition to set the values of the fields
+                updateDefinition = Builders<BsonDocument>.Update
+                    .Set("Socio", socioId);
+                  
+                // Update the document
+                result = collection.UpdateOne(filter, updateDefinition);
+
+                // Check if the update was successful
+                if (result.ModifiedCount > 0)
+                {
+                    Console.WriteLine("Documento actualizado correctamente.");
+                }
+                else
+                {
+                    Console.WriteLine("No se encontró ningún documento para actualizar.");
+                }
+
+                break;
+
+            case "3":
+                Console.WriteLine("Ingrese el número:");
+                numero = Console.ReadLine();
+
+
+                // Create an update definition to set the values of the fields
+                updateDefinition = Builders<BsonDocument>.Update
+                    .Set("Numero", numero);
+
+                // Update the document
+                result = collection.UpdateOne(filter, updateDefinition);
+
+                // Check if the update was successful
+                if (result.ModifiedCount > 0)
+                {
+                    Console.WriteLine("Documento actualizado correctamente.");
+                }
+                else
+                {
+                    Console.WriteLine("No se encontró ningún documento para actualizar.");
+                }
+                break;
+
+
+            case "4":
+                Console.WriteLine("Ingrese el chasis:");
+                chasis = Console.ReadLine();
+
+                Console.WriteLine("Ingrese el motor:");
+                motor = Console.ReadLine();
+
+                // Create an update definition to set the values of the fields
+                updateDefinition = Builders<BsonDocument>.Update
+                    .Set("Chasis", chasis)
+                    .Set("Motor", motor);
+
+                // Update the document
+                result = collection.UpdateOne(filter, updateDefinition);
+
+                // Check if the update was successful
+                if (result.ModifiedCount > 0)
+                {
+                    Console.WriteLine("Documento actualizado correctamente.");
+                }
+                else
+                {
+                    Console.WriteLine("No se encontró ningún documento para actualizar.");
+                }
+
+                break;
+
+            case "5":
+                Console.WriteLine("Ingrese la marca de las características:");
+                marca = Console.ReadLine();
+
+                Console.WriteLine("Ingrese el modelo de las características:");
+                modelo = Console.ReadLine();
+
+                Console.WriteLine("Ingrese el color original de las características:");
+                colorOriginal = Console.ReadLine();
+
+                Console.WriteLine("Ingrese la cilindrada de las características:");
+                cilindrada = Console.ReadLine();
+
+                // Create an update definition to set the values of the fields
+                updateDefinition = Builders<BsonDocument>.Update
+                    .Set("Caracteristicas.Marca", marca)
+                    .Set("Caracteristicas.Modelo", modelo)
+                    .Set("Caracteristicas.Color_original", colorOriginal)
+                    .Set("Caracteristicas.Cilindrada", cilindrada);
+
+                // Update the document
+                result = collection.UpdateOne(filter, updateDefinition);
+
+                // Check if the update was successful
+                if (result.ModifiedCount > 0)
+                {
+                    Console.WriteLine("Documento actualizado correctamente.");
+                }
+                else
+                {
+                    Console.WriteLine("No se encontró ningún documento para actualizar.");
+                }
+
+                break;
+
+
+            case "0":
+                Console.WriteLine("Exiting the application.");
+                return;
+
+            default:
+                Console.WriteLine("Invalid choice. Please enter a valid option.");
+                break;
         }
 
-        Console.WriteLine("Ingrese el número:");
-        string numero = Console.ReadLine();
 
-        Console.WriteLine("Ingrese el chasis:");
-        string chasis = Console.ReadLine();
-
-        Console.WriteLine("Ingrese el motor:");
-        string motor = Console.ReadLine();
-
-        Console.WriteLine("Ingrese la marca de las características:");
-        string marca = Console.ReadLine();
-
-        Console.WriteLine("Ingrese el modelo de las características:");
-        string modelo = Console.ReadLine();
-
-        Console.WriteLine("Ingrese el color original de las características:");
-        string colorOriginal = Console.ReadLine();
-
-        Console.WriteLine("Ingrese la cilindrada de las características:");
-        string cilindrada = Console.ReadLine();
-
-        // Create an update definition to set the values of the fields
-        var updateDefinition = Builders<BsonDocument>.Update
-            .Set("Socio", socioId)
-            .Set("Numero", numero)
-            .Set("Chasis", chasis)
-            .Set("Motor", motor)
-            .Set("Caracteristicas.Marca", marca)
-            .Set("Caracteristicas.Modelo", modelo)
-            .Set("Caracteristicas.Color_original", colorOriginal)
-            .Set("Caracteristicas.Cilindrada", cilindrada);
-
-        // Update the document
-        var result = collection.UpdateOne(filter, updateDefinition);
-
-        // Check if the update was successful
-        if (result.ModifiedCount > 0)
-        {
-            Console.WriteLine("Documento actualizado correctamente.");
-        }
-        else
-        {
-            Console.WriteLine("No se encontró ningún documento para actualizar.");
-        }
+        
     }
 
    
@@ -429,6 +846,7 @@ class Program
 
         Console.WriteLine("Document deleted successfully.");
     }
+
 
     static void DeleteUnidad(IMongoCollection<BsonDocument> collection)
     {
